@@ -5,24 +5,24 @@ from seqdbutils import gi2taxid,taxid2name,genInfo2fasta,getparenttaxid,blast2fa
 #server = BioSeqDatabase.open_database(driver="MySQLdb", user="root",
 #                     passwd = "", host = "localhost", db="bioinfo")
 
-gilist = [84043963,355751524,355565935,387763418,114579120,73969383,40788346,
-          332251518,5002645,301769165,410352203,168267520]
+#gilist = [84043963,355751524,355565935,387763418,114579120,73969383,40788346,
+#          332251518,5002645,301769165,410352203,168267520]
 
-taxidlist = [gi2taxid(x) for x in gilist]
-print taxidlist
+#taxidlist = [gi2taxid(x) for x in gilist]
+#print taxidlist
 
-namelist = [taxid2name(x) for x in taxidlist]
-print namelist
+#namelist = [taxid2name(x) for x in taxidlist]
+#print namelist
 
-parentlist = [taxid2name(getparenttaxid(getparenttaxid(getparenttaxid(getparenttaxid(x))))) for x in taxidlist]
-print parentlist
+#parentlist = [taxid2name(getparenttaxid(getparenttaxid(getparenttaxid(getparenttaxid(x))))) for x in taxidlist]
+#print parentlist
 
-ranklist = [taxid2rank(x) for x in taxidlist]
-print ranklist
+#ranklist = [taxid2rank(x) for x in taxidlist]
+#print ranklist
 
 #browsetaxonomy(9606)
-#browsetaxonomy(32630)
-#print taxid2cladename(32630,'superkingdom')
+browsetaxonomy(32630)
+#print taxid2cladename(32630,'superkingdom') # Error - synthetic
 
 #blast2superkingdom('/home/edmonds/Documents/5B/blast/automated/2759.xml')
 

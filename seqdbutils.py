@@ -23,6 +23,9 @@ given its integer identifier (integer -> string).
  - taxid2cladename(taxid,level) traverses the taxonomic tree to find the taxonomic name of a particular rank level. (int,string -> string)
     taxid2clade(9606,'genus') -> Homo
     taxid2cladename(9606,'superkingdom') -> Eukaryota
+
+ - browsetaxonomy(taxid) traverses the taxonomic tree to find the names of all the clades containing this taxon (int -> string)
+
 """
 
 import sys
@@ -133,19 +136,15 @@ def taxid2cladename(taxid,level):
     """
     if taxid2rank(taxid) == level:
         return taxid2name(taxid)
-    elif taxid2rank(taxid) == 'superkingdom':
-        return 'Error: %d'%taxid
-    elif taxid2name(taxid) in ['synthetic construct',
-                               'artificial sequences',
-                               'other sequences']:
-        return 'Error: %d'%taxid
+    elif taxid == 1: # taxid 1 corresponds to root
+        return 'Error: %s not found'%level
     else:
         return taxid2cladename(getparenttaxid(taxid),level)
 
 def browsetaxonomy(taxid):
     name = taxid2name(taxid)
     rank = taxid2rank(taxid)
-    print rank, name
+    print taxid,':',name,':',rank
     if name != 'root':
         browsetaxonomy(getparenttaxid(taxid))
                     

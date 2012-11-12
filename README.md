@@ -26,6 +26,7 @@ given its integer identifier (integer -> string).
     taxid2clade(9606,'genus') -> Homo
     taxid2cladename(9606,'superkingdom') -> Eukaryota
 
+ - browsetaxonomy(taxid) traverses the taxonomic tree to find the names of all the clades containing this taxon (int -> string)
 
 Useful links:
 [1] ftp://ftp.ncbi.nih.gov/pub/taxonomy/
