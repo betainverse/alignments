@@ -9,14 +9,23 @@ blast.py is a simple script for running blast searches. There may be problems wi
 seqdbutils.py contains several handy functions:
 
  - gi2taxid is function to search the file gi_taxid_prot.dmp for a gi identifier, 
-and find the taxonomic ID.
+and find the taxonomic ID. (integer -> integer)
 
  - taxid2name is a function to search the BioSQL database for the name of a taxon,
-given its identifier
+given its integer identifier (integer -> string).
 
- - genInfo2fasta is a function that retrieves the fasta sequence for any gi number.
+ - genInfo2fasta is a function that retrieves the fasta sequence for any integer gi number (integer -> text).
 
- - getparenttaxid retrieves the taxon id of the parent of the provided taxon, to enable traversing the taxonomic tree. 
+ - getparenttaxid retrieves the taxon id of the parent of the provided taxon, to enable traversing the taxonomic tree (integer -> integer). 
+
+ - blast2fasta extracts gi numbers from XML blast output, and retrieves the fasta-formatted sequence info for each gi number (XML file -> FASTA file). 
+
+ - taxid2rank retrieves the rank of a taxon (eg. kingdom, order, genus, species, superfamily, parvorder, subspieces, etc.) (integer -> string)
+
+ - taxid2cladename(taxid,level) traverses the taxonomic tree to find the taxonomic name of a particular rank level. (int,string -> string)
+    taxid2clade(9606,'genus') -> Homo
+    taxid2cladename(9606,'superkingdom') -> Eukaryota
+
 
 Useful links:
 [1] ftp://ftp.ncbi.nih.gov/pub/taxonomy/
