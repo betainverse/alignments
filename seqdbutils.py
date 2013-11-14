@@ -32,6 +32,7 @@ import sys
 import MySQLdb
 from Bio import Entrez
 import xml.etree.ElementTree as ET
+from Bio import AlignIO
 
 # def slowgi2taxid(gi,database):
 #     gistr = str(gi)
@@ -210,6 +211,34 @@ def _binarysearch(minidx,maxidx,filehandle,quarry):
         return _binarysearch(thisidx,maxidx,filehandle,quarry)
     elif quarry == thisID:
         return int(line.split()[1])
+
+def genericFilterFastaColumns(infile,outfile,startcol,endcol):
+    alignment = AlignIO.read(infile,"fasta")
+    AlignIO.write(alignment[:,startcol:endcol],outfile,"fasta")
+
+def _findFastaPosWOdashes(seq,pos):
+    """
+    find the position(output) in the sequence that includes dashes that
+    corresponds to the position(input) in the sequence that excludes dashes. 
+    string,integer-> integer
+    iterate through the sequence, counting the characters before the number
+    of non-dash characters reaches the desired number. 
+    """
+    totalchars = 0
+    nondashchars = 0
+    while nondashchars < pos:
+        if seq[totalchars] != '-':
+            nondashchars += 1
+        totalchars += 1
+    return totalchars
+
+def filterFastaColumnsByFirstSeq(infile,outfile,startres,endres):
+    alignment = AlignIO.read(infile,"fasta")
+    #convert from 1-based residue numbering to 0-based numbering
+    startcol = _findFastaPosWOdashes(alignment[0].seq,startres-1)
+    endcol = _findFastaPosWOdashes(alignment[0].seq,endres-1)
+    return genericFilterFastaColumns(infile,outfile,startcol,endcol)
+    
 
 def main():
     #if len(sys.argv) < 3:

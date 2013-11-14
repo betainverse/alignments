@@ -28,6 +28,8 @@ given its integer identifier (integer -> string).
 
  - browsetaxonomy(taxid) traverses the taxonomic tree to find the names of all the clades containing this taxon (int -> string)
 
+ - filterFastaColumnsByFirstSeq(infile,outfile,startres,endres) removes columns from a multiple sequence alignment, preserving only those corresponding to a given residue range in the first sequence. 
+
 Useful links:
 [1] ftp://ftp.ncbi.nih.gov/pub/taxonomy/
 
