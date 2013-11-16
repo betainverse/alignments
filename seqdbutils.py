@@ -29,7 +29,7 @@ given its integer identifier (integer -> string).
 """
 
 import sys
-import MySQLdb
+#import MySQLdb
 from Bio import Entrez
 import xml.etree.ElementTree as ET
 from Bio import AlignIO
@@ -66,6 +66,69 @@ def blast2fasta(XMLblastfilename,fastafilename):
         if hitids[0] == 'gi':
             geneInfoID = hitids[1]
             giList.append(int(geneInfoID))
+        else:
+            sys.stderr.write('%s\n'%hit.find('Hit_id'))
+    FastaText = ''
+    fastafile = open(fastafilename,'w')
+    for gi in giList:
+        sys.stderr.write('%d\n'%gi)
+        fastafile.write(genInfo2fasta(gi))
+
+def hit2organism(hit):
+    title = hit.find('Hit_def').text
+    start = title.find('[')
+    end = title.find(']')
+    organism = title[start+1:end]
+    return organism
+
+def organism2genusspecies(organism):
+    return ' '.join(organism.split()[0:2])
+
+def hit2percentcoverage(hit,query_length):
+    hsps = hit.find('Hit_hsps')
+    hsp = hsps.find('Hsp')
+    start = float(hsp.find('Hsp_query-from').text)
+    end = float(hsp.find('Hsp_query-to').text)
+    percentcoverage = 100*(end-start)/query_length
+    return percentcoverage
+
+def filterblast2fasta(XMLblastfilename,fastafilename):
+    tree = ET.parse(XMLblastfilename)
+    root = tree.getroot()
+    iterations = root.find('BlastOutput_iterations')
+    query_length = float(root.find('BlastOutput_query-len').text)
+    Iteration = iterations.find('Iteration')
+    Iteration_hits = Iteration.find('Iteration_hits')
+    hits = Iteration_hits.findall('Hit')
+    giDict = {}
+    coverage = {}   
+    for hit in hits:
+        geneInfoID = None
+        accept = True
+        hitnum = hit.find('Hit_num').text
+        title = hit.find('Hit_def').text
+        hitids = hit.find('Hit_id').text.split('|')
+        if hitids[0] == 'gi':
+            geneInfoID = hitids[1]
+            #giList.append(int(geneInfoID))
+            gi = int(geneInfoID)
+            pct = hit2percentcoverage(hit,query_length)
+            organism = (organism2genusspecies(hit2organism(hit)))
+            if organism not in coverage.keys() or pct > coverage[organism]:
+                giDict[organism]=gi
+                coverage[organism]=pct
+            #sys.stderr.write('%s\t%d\t%s\n'%(geneInfoID,pct,organism))
+        else:
+            sys.stderr.write('%s\n'%hit.find('Hit_id'))
+    giList = []
+    for organism in coverage.keys():
+        if coverage[organism] > 90 and len(organism.split())==2 and organism.split()[1] != 'sp.' and organism.split()[0]=='Streptococcus':
+            print('%s\t%d\t%s'%(giDict[organism],coverage[organism],organism))
+            giList.append(giDict[organism])
+    for organism in coverage.keys():
+        if coverage[organism] > 90 and len(organism.split())==2 and organism.split()[1] != 'sp.' and organism.split()[0]!='Streptococcus':
+            print('%s\t%d\t%s'%(giDict[organism],coverage[organism],organism))
+            giList.append(giDict[organism])
     FastaText = ''
     fastafile = open(fastafilename,'w')
     for gi in giList:
@@ -168,7 +231,7 @@ def getparenttaxid(taxid):
 
 def genInfo2fasta(gi):
     Entrez.email = "kedmonds@bu.edu"   
-    net_handle = Entrez.efetch(db="nucleotide", id=gi,rettype="fasta", retmode="text")
+    net_handle = Entrez.efetch(db="protein", id=str(gi),rettype="fasta", retmode="text")
     return net_handle.read()
 
 def gi2taxid(gi):
