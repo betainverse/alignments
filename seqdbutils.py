@@ -32,7 +32,7 @@ import sys
 #import MySQLdb
 from Bio import Entrez
 import xml.etree.ElementTree as ET
-from Bio import AlignIO
+from Bio import AlignIO,SeqIO
 
 # def slowgi2taxid(gi,database):
 #     gistr = str(gi)
@@ -84,6 +84,9 @@ def hit2organism(hit):
 def organism2genusspecies(organism):
     return ' '.join(organism.split()[0:2])
 
+def organism2genus_species(organism):
+    return '_'.join(organism.split()[0:2])
+
 def hit2percentcoverage(hit,query_length):
     hsps = hit.find('Hit_hsps')
     hsp = hsps.find('Hsp')
@@ -134,6 +137,24 @@ def filterblast2fasta(XMLblastfilename,fastafilename):
     for gi in giList:
         sys.stderr.write('%d\n'%gi)
         fastafile.write(genInfo2fasta(gi))
+
+def simplifyFASTAtitles(fastainfile,fastaoutfile):
+    """
+    Extract species from the ID
+    """
+    outfile = open(fastaoutfile,'w')
+    for seq_record in SeqIO.parse(fastainfile, "fasta"):
+        title = seq_record.description
+        #print title
+        start = title.find('[')
+        end = title.find(']')
+        organism = title[start+1:end]
+        outfile.write(">%s\n"%organism2genus_species(organism))
+        outfile.write(str(seq_record.seq))
+        outfile.write('\n')
+        #seq_record.description = organism2genusspecies(organism)
+    outfile.close()
+
 
 def blast2superkingdom(XMLblastfilename):
     tree = ET.parse(XMLblastfilename)
