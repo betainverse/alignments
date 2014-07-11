@@ -10,9 +10,10 @@ from seqdbutils import filterblast2fasta,simplifyFASTAtitles
 #save_file.close()
 #result_handle.close()
 
-XMLblastfilename = 'scza.xml'
-fastafilename = 'scza.fasta'
-filterblast2fasta(XMLblastfilename,fastafilename)
+#XMLblastfilename = 'scza.xml'
+#fastafilename = 'scza.fasta'
+#filterblast2fasta(XMLblastfilename,fastafilename)
 
-simplifyFASTAtitles(fastafilename,'outputscza.fasta')
+#simplifyFASTAtitles(fastafilename,'outputscza.fasta')
+simplifyFASTAtitles('manualsczablastto30.fasta','manualsczablastto30simple.fasta')
 
