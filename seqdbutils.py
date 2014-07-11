@@ -167,7 +167,7 @@ def getparenttaxid(taxid):
     return parenttaxid
 
 def genInfo2fasta(gi):
-    Entrez.email = "kedmonds@bu.edu"   
+    Entrez.email = "edmondsk@indiana.edu"   
     net_handle = Entrez.efetch(db="nucleotide", id=gi,rettype="fasta", retmode="text")
     return net_handle.read()
 
