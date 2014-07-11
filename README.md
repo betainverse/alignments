@@ -30,6 +30,16 @@ given its integer identifier (integer -> string).
 
  - filterFastaColumnsByFirstSeq(infile,outfile,startres,endres) removes columns from a multiple sequence alignment, preserving only those corresponding to a given residue range in the first sequence. 
 
+To do:
+
+Parse CSV of blast output
+Calculate %coverage from q.start and q.end
+fields: query id, subject ids, % identity, % positives, alignment length,
+mismatches, gap opens, q. start, q. end, s. start, s. end, evalue, bit score
+somehow parse subject IDs to determine whether you've seen that species
+before. (gi2taxid helps) If so, compare coverage to prior sequence from same species. If
+coverage is more, replace prior sequence in dictionary keyed by species. 
+
 Useful links:
 [1] ftp://ftp.ncbi.nih.gov/pub/taxonomy/
 
