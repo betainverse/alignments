@@ -251,9 +251,23 @@ def getparenttaxid(taxid):
     return parenttaxid
 
 def genInfo2fasta(gi):
-    Entrez.email = "kedmonds@bu.edu"   
+    Entrez.email = "edmondsk@indiana.edu"   
     net_handle = Entrez.efetch(db="protein", id=str(gi),rettype="fasta", retmode="text")
     return net_handle.read()
+
+def genInfo2SeqDNA(gi):
+    Entrez.email = "edmondsk@indiana.edu"
+    net_handle = Entrez.efetch(db="nucleotide", id=str(gi),rettype="fasta", retmode="text")
+    record = SeqIO.read(net_handle,"fasta")
+    net_handle.close()
+    return record
+
+def getGenomeChunk(gi,start,end,rev):
+    record = genInfo2SeqDNA(gi)
+    if rev:
+        return record.seq[start:end].reverse_complement()
+    else:
+        return record.seq[start:end]
 
 def gi2taxid(gi):
     minidx = 0
