@@ -3,9 +3,10 @@
 Perform a search on the Absynte web server, save the results as full HTML. Use this parser to parse the HTML to obtain a list of genbank ids, then retrieve a fasta file containing those genes, then perform a multiple sequence alignment, then use espript to color according to conservation. In the middle of the process it is necessary to look visually at the Absynte results to see what threshold to use to exclude less well-conserved genes. Also use the representative taxid table to help cull to only have one strain represented from each species. Ultimately it will be good to do a further taxonomic analysis. 
 """
 
-#import sys,re
-#from Bio import Entrez,AlignIO,SeqIO
+import sys
+from Bio import Entrez,AlignIO,SeqIO
 from bs4 import BeautifulSoup
+from Bio.Emboss.Applications import NeedleCommandline
 
 def checkCoords(coords):
     coordinates = [int(x) for x in coords.split(',')]
@@ -37,15 +38,16 @@ def Absynte2ids(infile,threshold,outfile):
         openfile.write('%s\t%s\t%0.2f\n'%(organism,ID,score))
     openfile.close()
 
-infile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/Absynte Results.html'
-threshold = 28
-outfile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/SoxR_ID_list.txt'
+#### First run this:
 
-#Absynte2ids('/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/test.html',28,'/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/SoxR_ID_list.txt')
-
-Absynte2ids(infile, threshold, outfile)
+# infile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/Absynte Results.html'
+# threshold = 28
+# outfile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/SoxR_ID_list.txt'
+# Absynte2ids(infile, threshold, outfile)
 
 # Now take this list and look at the actual HTML file and remove lines that don't have the recognizable gene organization
+# Save the result as SoxR_ID_list_culled.txt
+
 # Here is the result:
 ## Paracoccus_denitrificans_PD1222_bp13020_C2	119377446	63.96
 ## Rhodobacter_sphaeroides_ATCC_17025_bp15755_C2	145558164	38.31
@@ -73,3 +75,25 @@ Absynte2ids(infile, threshold, outfile)
 ## Hyphomicrobium_denitrificans_ATCC_51888_bp33261	299524051	28.02
 ## Rhodopseudomonas_palustris_TIE_1_bp20167	192287075	28.02
 ## Rhodopseudomonas_palustris_HaA2_bp15747	86574508	28.02
+
+def genInfo2fasta(gi):
+    Entrez.email = "edmondsk@indiana.edu"   
+    net_handle = Entrez.efetch(db="protein", id=gi,rettype="fasta", retmode="text")
+    return net_handle.read()
+
+
+def IDs2fasta(infile,outfile):
+    openfile = open(infile,'r')
+    lines = openfile.readlines()
+    openfile.close()
+    IDs = [line.split('\t')[1] for line in lines]
+    openfile = open(outfile,'w')
+    for gi in IDs:
+        sys.stderr.write('%s\n'%gi)
+        openfile.write(genInfo2fasta(gi))
+    openfile.close()
+        
+## IDlistfile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/SoxR_ID_list_culled.txt'
+## outputfastafile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/SoxRs.fasta'
+
+## IDs2fasta(IDlistfile,outputfastafile)
