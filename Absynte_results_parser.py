@@ -97,3 +97,8 @@ def IDs2fasta(infile,outfile):
 ## outputfastafile = '/Users/edmonds/Documents/GiedrocLab/CzrA/SoxRs/Absynte/SoxRs.fasta'
 
 ## IDs2fasta(IDlistfile,outputfastafile)
+# Use ClustalW or something in Jalview or in Bioinformatics Toolkit to align
+# Tweak the alignment if it looks like some sequences have the wrong start codon annotated, maybe just throw some out.
+# Put into HHfilter on bioinformatics toolkit. Try filtering to 55% sequence identity.
+
+# SoxRs appear to come from a couple of orders of alpha-proteobacteria: Rhizobiales and Rhodobacterales. 
